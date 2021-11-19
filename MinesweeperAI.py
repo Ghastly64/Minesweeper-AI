@@ -37,13 +37,13 @@ def resMatchMult(image, match, thresh, out, list):
 time.sleep(3)
 image = pyautogui.screenshot()
 
-#scMatch = cv.imread("files/sc-match1.png", 0)
-scMatch = cv.imread("files/grid_tl.png", 0)
-top_l = resMatch(image, scMatch, "files/res1.png")
+#scMatch = cv.imread("images/sc-match1.png", 0)
+scMatch = cv.imread("images/grid_tl.png", 0)
+top_l = resMatch(image, scMatch, "imagesOut/res1.png")
 
-#scMatch2 = cv.imread("files/sc-match2.png", 0)
-scMatch2 = cv.imread("files/grid_br.png", 0)
-bot_r = resMatch(image, scMatch2, "files/res2.png")
+#scMatch2 = cv.imread("images/sc-match2.png", 0)
+scMatch2 = cv.imread("images/grid_br.png", 0)
+bot_r = resMatch(image, scMatch2, "imagesOut/res2.png")
 
 game_coords = [top_l[0], bot_r[1]]
 
@@ -51,7 +51,7 @@ game_coords = [top_l[0], bot_r[1]]
 #main loop time
 game_sc = pyautogui.screenshot(region=(game_coords[0][0],game_coords[0][1], game_coords[1][0]-game_coords[0][0], game_coords[1][1]-game_coords[0][1]))
 game_sc1 = cv.cvtColor(np.array(game_sc), cv.COLOR_RGB2BGR)
-cv.imwrite("files/game_sc.png",game_sc1)
+cv.imwrite("imagesOut/game_sc.png",game_sc1)
 
 print(game_coords[1][0]-game_coords[0][0])
 
@@ -63,8 +63,8 @@ elif game_coords[1][0]-game_coords[0][0] < 800:
 def numOCR():
     
     one_list = []
-    ones = cv.imread("files/ones.png", 0)
-    resMatchMult(game_sc, ones, .93, "files/onesOut.png", one_list)
+    ones = cv.imread("images/ones.png", 0)
+    resMatchMult(game_sc, ones, .93, "imagesOut/onesOut.png", one_list)
 
     one_coords = []
     for one in one_list:
@@ -77,8 +77,8 @@ def numOCR():
 
 
     two_list = []
-    twos = cv.imread("files/twos.png", 0)
-    resMatchMult(game_sc, twos, .93, "files/towsOut.png", two_list)
+    twos = cv.imread("images/twos.png", 0)
+    resMatchMult(game_sc, twos, .93, "imagesOut/twosOut.png", two_list)
 
     two_coords = []
     for two in two_list:
@@ -91,8 +91,8 @@ def numOCR():
 
 
     three_list = []
-    threes = cv.imread("files/threes.png", 0)
-    resMatchMult(game_sc, threes, .93, "files/threesOut.png", three_list)
+    threes = cv.imread("images/threes.png", 0)
+    resMatchMult(game_sc, threes, .93, "imagesOut/threesOut.png", three_list)
 
     three_coords = []
     for three in three_list:
@@ -105,8 +105,8 @@ def numOCR():
 
 
     four_list = []
-    fours = cv.imread("files/fours.png", 0)
-    resMatchMult(game_sc, fours, .93, "files/foursOut.png", four_list)
+    fours = cv.imread("images/fours.png", 0)
+    resMatchMult(game_sc, fours, .93, "imagesOut/foursOut.png", four_list)
 
     four_coords = []
     for four in four_list:
@@ -119,8 +119,8 @@ def numOCR():
 
 
     five_list = []
-    fives = cv.imread("files/fives.png", 0)
-    resMatchMult(game_sc, fives, .93, "files/fivesOut.png", five_list)
+    fives = cv.imread("images/fives.png", 0)
+    resMatchMult(game_sc, fives, .93, "imagesOut/fivesOut.png", five_list)
 
     five_coords = []
     for five in five_list:
@@ -133,8 +133,8 @@ def numOCR():
 
 
     six_list = []
-    sixes = cv.imread("files/sixes.png", 0)
-    resMatchMult(game_sc, sixes, .93, "files/sixesOut.png", six_list)
+    sixes = cv.imread("images/sixes.png", 0)
+    resMatchMult(game_sc, sixes, .93, "imagesOut/sixesOut.png", six_list)
 
     six_coords = []
     for six in six_list:
@@ -146,8 +146,8 @@ def numOCR():
         grid[x[1]-1][x[0]-1] = "6"
 
     flag_list = []
-    flags = cv.imread("files/flags.png", 0)
-    resMatchMult(game_sc, flags, .93, "files/flagsOut.png", flag_list)
+    flags = cv.imread("images/flags.png", 0)
+    resMatchMult(game_sc, flags, .93, "imagesOut/flagsOut.png", flag_list)
 
     flag_coords = []
     for flag in flag_list:
@@ -159,8 +159,8 @@ def numOCR():
         grid[x[1]-1][x[0]-1] = "f"
     
     zero_list = []
-    zeros = cv.imread("files/zero1.png", 0)
-    resMatchMult(game_sc, zeros, .93, "files/zerosOut.png", zero_list)
+    zeros = cv.imread("images/zero1.png", 0)
+    resMatchMult(game_sc, zeros, .93, "imagesOut/zerosOut.png", zero_list)
 
     zero_coords = []
     for zero in zero_list:
