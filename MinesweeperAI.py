@@ -34,15 +34,17 @@ def resMatchMult(image, match, thresh, out, list):
         list.append(pt)
     cv.imwrite(out,img_full)
 
+print(pyautogui.size())
+
 time.sleep(3)
 image = pyautogui.screenshot()
 
-#scMatch = cv.imread("images/sc-match1.png", 0)
-scMatch = cv.imread("images/grid_tl.png", 0)
+scMatch = cv.imread("images/sc-match1.png", 0)
+#scMatch = cv.imread("images/grid_tl.png", 0)
 top_l = resMatch(image, scMatch, "imagesOut/res1.png")
 
-#scMatch2 = cv.imread("images/sc-match2.png", 0)
-scMatch2 = cv.imread("images/grid_br.png", 0)
+scMatch2 = cv.imread("images/sc-match2.png", 0)
+#scMatch2 = cv.imread("images/grid_br.png", 0)
 bot_r = resMatch(image, scMatch2, "imagesOut/res2.png")
 
 game_coords = [top_l[0], bot_r[1]]
@@ -55,10 +57,14 @@ cv.imwrite("imagesOut/game_sc.png",game_sc1)
 
 print(game_coords[1][0]-game_coords[0][0])
 
-if game_coords[1][0]-game_coords[0][0] > 800:
+if game_coords[1][0]-game_coords[0][0] > 900:
     grid = np.full((16,30), "0",  dtype=str)
-elif game_coords[1][0]-game_coords[0][0] < 800:
+elif game_coords[1][0]-game_coords[0][0] < 900:
     grid = np.full((16,16), "0",  dtype=str)
+
+print(game_coords[0][0])
+print(game_coords[0][1])
+
 
 def numOCR():
     
@@ -68,12 +74,13 @@ def numOCR():
 
     one_coords = []
     for one in one_list:
-        x = math.ceil(one[0] / 48)
-        y = math.ceil(one[1] / 48)
+        x = math.ceil((one[0] - 10) / 48)
+        y = math.ceil((one[1] - 137) / 48)
         one_coords.append([x, y])
-    
+
     for x in one_coords:
-        grid[x[1]-1][x[0]-1] = "1"
+        if grid[x[1]-1,x[0]-1] == 'x' or grid[x[1]-1,x[0]-1] == '0':
+            grid[x[1]-1, x[0]-1] = "1"
 
 
     two_list = []
@@ -82,12 +89,13 @@ def numOCR():
 
     two_coords = []
     for two in two_list:
-        x = math.ceil(two[0] / 48)
-        y = math.ceil(two[1] / 48)
+        x = math.ceil((two[0]- 10) / 48)
+        y = math.ceil((two[1]- 137) / 48)
         two_coords.append([x, y])
     
     for x in two_coords:
-        grid[x[1]-1][x[0]-1] = "2"
+        if grid[x[1]-1,x[0]-1] == 'x' or grid[x[1]-1,x[0]-1] == '0':
+            grid[x[1]-1,x[0]-1] = "2"
 
 
     three_list = []
@@ -96,12 +104,13 @@ def numOCR():
 
     three_coords = []
     for three in three_list:
-        x = math.ceil(three[0] / 48)
-        y = math.ceil(three[1] / 48)
+        x = math.ceil((three[0]- 10) / 48)
+        y = math.ceil((three[1]- 137) / 48)
         three_coords.append([x, y])
 
     for x in three_coords:
-        grid[x[1]-1][x[0]-1] = "3"
+        if grid[x[1]-1,x[0]-1] == 'x' or grid[x[1]-1,x[0]-1] == '0':
+            grid[x[1]-1,x[0]-1] = "3"
 
 
     four_list = []
@@ -110,12 +119,13 @@ def numOCR():
 
     four_coords = []
     for four in four_list:
-        x = math.ceil(four[0] / 48)
-        y = math.ceil(four[1] / 48)
+        x = math.ceil((four[0]- 10) / 48)
+        y = math.ceil((four[1]- 137) / 48)
         four_coords.append([x, y])
     
     for x in four_coords:
-        grid[x[1]-1][x[0]-1] = "4"
+        if grid[x[1]-1,x[0]-1] == 'x' or grid[x[1]-1,x[0]-1] == '0':
+            grid[x[1]-1,x[0]-1] = "4"
 
 
     five_list = []
@@ -124,12 +134,13 @@ def numOCR():
 
     five_coords = []
     for five in five_list:
-        x = math.ceil(five[0] / 48)
-        y = math.ceil(five[1] / 48)
+        x = math.ceil((five[0]- 10) / 48)
+        y = math.ceil((five[1]- 137) / 48)
         five_coords.append([x, y])
     
     for x in five_coords:
-        grid[x[1]-1][x[0]-1] = "5"
+        if grid[x[1]-1,x[0]-1] == 'x' or grid[x[1]-1,x[0]-1] == '0':
+            grid[x[1]-1,x[0]-1] = "5"
 
 
     six_list = []
@@ -138,12 +149,13 @@ def numOCR():
 
     six_coords = []
     for six in six_list:
-        x = math.ceil(six[0] / 48)
-        y = math.ceil(six[1] / 48)
+        x = math.ceil((six[0]- 10) / 48)
+        y = math.ceil((six[1]- 137) / 48)
         six_coords.append([x, y])
     
     for x in six_coords:
-        grid[x[1]-1][x[0]-1] = "6"
+        if grid[x[1]-1,x[0]-1] == 'x' or grid[x[1]-1,x[0]-1] == '0':
+            grid[x[1]-1,x[0]-1] = "6"
 
     flag_list = []
     flags = cv.imread("images/flags.png", 0)
@@ -151,12 +163,13 @@ def numOCR():
 
     flag_coords = []
     for flag in flag_list:
-        x = math.ceil(flag[0] / 48)
-        y = math.ceil(flag[1] / 48)
+        x = math.ceil((flag[0]- 10) / 48)
+        y = math.ceil((flag[1]- 137) / 48)
         flag_coords.append([x, y])
 
     for x in flag_coords:
-        grid[x[1]-1][x[0]-1] = "f"
+        if grid[x[1]-1,x[0]-1] == 'x' or grid[x[1]-1,x[0]-1] == '0':
+            grid[x[1]-1,x[0]-1] = "f"
     
     zero_list = []
     zeros = cv.imread("images/zero1.png", 0)
@@ -164,18 +177,63 @@ def numOCR():
 
     zero_coords = []
     for zero in zero_list:
-        x = math.ceil(zero[0] / 48)
-        y = math.ceil(zero[1] / 48)
+        x = math.ceil((zero[0]- 10) / 48)
+        y = math.ceil((zero[1]- 137) / 48)
         zero_coords.append([x, y])
 
     for x in zero_coords:
-        grid[x[1]-1][x[0]-1] = "x"
+        if grid[x[1]-1,x[0]-1] == 'x' or grid[x[1]-1,x[0]-1] == '0':
+            grid[x[1]-1][x[0]-1] = "x"
 numOCR();
 
 print(grid)
 
+def getSurr(x, y):
+    surrList = []
+    if x-1 >= 0 and y-1 >= 0:
+        surrList.append([grid[y-1, x-1], [x-1, y-1], "top left"]) #top left
+    if y-1 >= 0:
+        surrList.append([grid[y-1, x], [x, y-1], "top"]) #top
+    if x+1 <= 15 and y-1 >= 0:
+        surrList.append([grid[y-1, x+1], [x+1, y-1], "top right"]) #top right
+    if x-1 >= 0:
+        surrList.append([grid[y, x-1], [x-1, y], "left"]) #left
+    if x+1 <= 15:
+        surrList.append([grid[y, x+1], [x+1, y], "right"]) #right
+    if x-1 >= 0 and y+1 <= 15:
+        surrList.append([grid[y+1, x-1], [x-1, y+1], "bottom left"]) #bottom left
+    if y+1 <= 15:
+        surrList.append([grid[y+1, x], [x, y+1], "bottom"]) #bottom
+    if x+1 <= 15 and y+1 <= 15:
+        surrList.append([grid[y+1, x+1], [x+1, y+1], "bottom right"]) #bottom right
+    return surrList
+
+def B1(x, y):
+    surrList = getSurr(x, y)
+    count = 0
+    for surr in surrList:
+        if surr[0] == "x" or surr[0] == "f":
+            count += 1
+    #print("---------")
+    #print("count " + str(count))
+    #print("value " + grid[y, x])
+    #print("coords " + str([x, y]))
+    
+    if str(count) == grid[y, x]:
+        for surr in surrList:
+            if surr[0] == "x":
+                print("right click " + str(surr[1]))
+                print("wanna click " + str([(surr[1][0]*48)+10+game_coords[0][0], (surr[1][1]*48)+137+game_coords[0][1]]))
+                #pyautogui.rightClick(x=((surr[1][0]*48)+10+game_coords[0][0])/1.77777778, y=((surr[1][1]*48)+137+game_coords[0][1])/1.77777778)
 
 
+rows = grid.shape[0]
+cols = grid.shape[1]
+
+for x in range(0, cols):
+    for y in range(0, rows):
+        #print(grid[x,y])
+        B1(x, y)
 
 
 
