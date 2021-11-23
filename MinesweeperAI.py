@@ -1,10 +1,9 @@
 import cv2 as cv
 import numpy as np
-import imutils
 import pyautogui
 import time
 import math
-from matplotlib import pyplot as plt
+import mouse
 
 
 def resMatch(image, match, out):
@@ -36,8 +35,10 @@ def resMatchMult(image, match, thresh, out, list):
 
 print(pyautogui.size())
 
+
 time.sleep(3)
 image = pyautogui.screenshot()
+print(pyautogui.position())
 
 scMatch = cv.imread("images/sc-match1.png", 0)
 #scMatch = cv.imread("images/grid_tl.png", 0)
@@ -220,12 +221,41 @@ def B1(x, y):
     #print("coords " + str([x, y]))
     
     if str(count) == grid[y, x]:
+        command_list = []
         for surr in surrList:
             if surr[0] == "x":
-                print("right click " + str(surr[1]))
-                print("wanna click " + str([(surr[1][0]*48)+10+game_coords[0][0], (surr[1][1]*48)+137+game_coords[0][1]]))
-                #pyautogui.rightClick(x=((surr[1][0]*48)+10+game_coords[0][0])/1.77777778, y=((surr[1][1]*48)+137+game_coords[0][1])/1.77777778)
+                command_list.append(surr[1])
+    command_list = list(dict.fromkeys(command_list))
+    print(command_list)
+    for command in command_list:
+        print("right click " + str(command))
+        print("wanna click " + str([(command[0]*48)+10+game_coords[0][0], (command[1]*48)+137+game_coords[0][1]]))
+        print("wanna click " + str([((command[0]*48)+10+game_coords[0][0]+24)*0.5625, ((command[1]*48)+137+game_coords[0][1]+24)*0.5625]))
+        #mouse.move(((command[0]*48)+10+game_coords[0][0]+24)*0.5625, ((command[1]*48)+137+game_coords[0][1]+24)*0.5625, absolute=True, duration=0.1)
+        #mouse.right_click()
+        #pyautogui.rightClick(x=((command[0]*48)+10+game_coords[0][0]+24)*0.5625, y=((command[1]*48)+137+game_coords[0][1]+24)*0.5625)
 
+def B2(x, y):
+    surrList = getSurr(x, y)
+    count = 0
+    for surr in surrList:
+        if surr[0] == "f":
+            count += 1
+    if str(count) == grid[y, x]:
+        command_list = []
+        for surr in surrList:
+            if surr[0] == "x":
+                command_list.append(surr[1])
+    command_list = list(dict.fromkeys(command_list))
+    print(command_list)
+    for command in command_list:
+        print("right click " + str(command))
+        print("wanna click " + str([(command[0]*48)+10+game_coords[0][0], (command[1]*48)+137+game_coords[0][1]]))
+        print("wanna click " + str([((command[0]*48)+10+game_coords[0][0]+24)*0.5625, ((command[1]*48)+137+game_coords[0][1]+24)*0.5625]))
+        #mouse.move(((command[0]*48)+10+game_coords[0][0]+24)*0.5625, ((command[1]*48)+137+game_coords[0][1]+24)*0.5625, absolute=True, duration=0.1)
+        #mouse.right_click()
+        #pyautogui.rightClick(x=((command[0]*48)+10+game_coords[0][0]+24)*0.5625, y=((command[1]*48)+137+game_coords[0][1]+24)*0.5625)
+    
 
 rows = grid.shape[0]
 cols = grid.shape[1]
