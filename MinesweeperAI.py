@@ -3,7 +3,6 @@ import numpy as np
 import pyautogui
 import time
 import math
-import mouse
 
 
 def resMatch(image, match, out):
@@ -33,6 +32,13 @@ def resMatchMult(image, match, thresh, out, list):
         list.append(pt)
     cv.imwrite(out,img_full)
 
+def removeDups(list):
+    newList = []
+    for item in list:
+        if item not in newList:
+            newList.append(item)
+    return newList
+
 print(pyautogui.size())
 
 
@@ -51,29 +57,13 @@ bot_r = resMatch(image, scMatch2, "imagesOut/res2.png")
 game_coords = [top_l[0], bot_r[1]]
 
 
-#main loop time
-game_sc = pyautogui.screenshot(region=(game_coords[0][0],game_coords[0][1], game_coords[1][0]-game_coords[0][0], game_coords[1][1]-game_coords[0][1]))
-game_sc1 = cv.cvtColor(np.array(game_sc), cv.COLOR_RGB2BGR)
-cv.imwrite("imagesOut/game_sc.png",game_sc1)
-
-print(game_coords[1][0]-game_coords[0][0])
-
-if game_coords[1][0]-game_coords[0][0] > 900:
-    grid = np.full((16,30), "0",  dtype=str)
-elif game_coords[1][0]-game_coords[0][0] < 900:
-    grid = np.full((16,16), "0",  dtype=str)
-
-print(game_coords[0][0])
-print(game_coords[0][1])
-
-
-def numOCR():
-    
+def numOCR(game_sc, grid):
     one_list = []
     ones = cv.imread("images/ones.png", 0)
     resMatchMult(game_sc, ones, .93, "imagesOut/onesOut.png", one_list)
 
     one_coords = []
+
     for one in one_list:
         x = math.ceil((one[0] - 10) / 48)
         y = math.ceil((one[1] - 137) / 48)
@@ -185,11 +175,11 @@ def numOCR():
     for x in zero_coords:
         if grid[x[1]-1,x[0]-1] == 'x' or grid[x[1]-1,x[0]-1] == '0':
             grid[x[1]-1][x[0]-1] = "x"
-numOCR();
 
-print(grid)
+flag_list = []
+click_list = []
 
-def getSurr(x, y):
+def getSurr(x, y, grid):
     surrList = []
     if x-1 >= 0 and y-1 >= 0:
         surrList.append([grid[y-1, x-1], [x-1, y-1], "top left"]) #top left
@@ -209,8 +199,29 @@ def getSurr(x, y):
         surrList.append([grid[y+1, x+1], [x+1, y+1], "bottom right"]) #bottom right
     return surrList
 
-def B1(x, y):
-    surrList = getSurr(x, y)
+def doCommands():
+    global flag_list
+    flag_list = removeDups(flag_list)
+    for command in flag_list:
+        print("right click " + str(command))
+        print("wanna right click " + str([(command[0]*48)+10+game_coords[0][0], (command[1]*48)+137+game_coords[0][1]]))
+        print("wanna right click " + str([((command[0]*48)+10+game_coords[0][0]+50)*0.5, ((command[1]*48)+137+game_coords[0][1]+50)*0.5]))
+        #mouse.move(((command[0]*48)+10+game_coords[0][0]+24)*0.5625, ((command[1]*48)+137+game_coords[0][1]+24)*0.5625, absolute=True, duration=0.1)
+        #mouse.right_click()
+        pyautogui.rightClick(x=((command[0]*48)+10+game_coords[0][0]+50)*0.5, y=((command[1]*48)+137+game_coords[0][1]+50)*0.5)
+    global click_list
+    click_list = removeDups(click_list)
+    for command in click_list:
+        print("click " + str(command))
+        print("wanna click " + str([(command[0]*48)+10+game_coords[0][0], (command[1]*48)+137+game_coords[0][1]]))
+        print("wanna click " + str([((command[0]*48)+10+game_coords[0][0]+50)*0.5, ((command[1]*48)+137+game_coords[0][1]+50)*0.5]))
+        #mouse.move(((command[0]*48)+10+game_coords[0][0]+24)*0.5625, ((command[1]*48)+137+game_coords[0][1]+24)*0.5625, absolute=True, duration=0.1)
+        #mouse.right_click()
+        pyautogui.click(x=((command[0]*48)+10+game_coords[0][0]+50)*0.5, y=((command[1]*48)+137+game_coords[0][1]+50)*0.5)
+
+def B1(x, y, grid):
+    global flag_list
+    surrList = getSurr(x, y, grid)
     count = 0
     for surr in surrList:
         if surr[0] == "x" or surr[0] == "f":
@@ -219,51 +230,64 @@ def B1(x, y):
     #print("count " + str(count))
     #print("value " + grid[y, x])
     #print("coords " + str([x, y]))
-    
     if str(count) == grid[y, x]:
-        command_list = []
         for surr in surrList:
             if surr[0] == "x":
-                command_list.append(surr[1])
-    command_list = list(dict.fromkeys(command_list))
-    print(command_list)
-    for command in command_list:
-        print("right click " + str(command))
-        print("wanna click " + str([(command[0]*48)+10+game_coords[0][0], (command[1]*48)+137+game_coords[0][1]]))
-        print("wanna click " + str([((command[0]*48)+10+game_coords[0][0]+24)*0.5625, ((command[1]*48)+137+game_coords[0][1]+24)*0.5625]))
-        #mouse.move(((command[0]*48)+10+game_coords[0][0]+24)*0.5625, ((command[1]*48)+137+game_coords[0][1]+24)*0.5625, absolute=True, duration=0.1)
-        #mouse.right_click()
-        #pyautogui.rightClick(x=((command[0]*48)+10+game_coords[0][0]+24)*0.5625, y=((command[1]*48)+137+game_coords[0][1]+24)*0.5625)
+                flag_list.append(surr[1])
 
-def B2(x, y):
-    surrList = getSurr(x, y)
+def B2(x, y, grid):
+    global click_list
+    surrList = getSurr(x, y, grid)
     count = 0
     for surr in surrList:
         if surr[0] == "f":
             count += 1
     if str(count) == grid[y, x]:
-        command_list = []
         for surr in surrList:
             if surr[0] == "x":
-                command_list.append(surr[1])
-    command_list = list(dict.fromkeys(command_list))
-    print(command_list)
-    for command in command_list:
-        print("right click " + str(command))
-        print("wanna click " + str([(command[0]*48)+10+game_coords[0][0], (command[1]*48)+137+game_coords[0][1]]))
-        print("wanna click " + str([((command[0]*48)+10+game_coords[0][0]+24)*0.5625, ((command[1]*48)+137+game_coords[0][1]+24)*0.5625]))
-        #mouse.move(((command[0]*48)+10+game_coords[0][0]+24)*0.5625, ((command[1]*48)+137+game_coords[0][1]+24)*0.5625, absolute=True, duration=0.1)
-        #mouse.right_click()
-        #pyautogui.rightClick(x=((command[0]*48)+10+game_coords[0][0]+24)*0.5625, y=((command[1]*48)+137+game_coords[0][1]+24)*0.5625)
-    
+                click_list.append(surr[1])
 
-rows = grid.shape[0]
-cols = grid.shape[1]
+def one1(x, y, grid):
+    global flag_list
+    surrList = getSurr(x, y, grid)
+    count = 0
+    for surr in surrList:
+        if surr[0] == "x" or surr[0] == "f":
+            count += 1
+    if str(count) == grid[y, x]:
+        for surr in surrList:
+            if surr[0] == "x":
+                flag_list.append(surr[1])
 
-for x in range(0, cols):
-    for y in range(0, rows):
-        #print(grid[x,y])
-        B1(x, y)
+def mainLoop():
+
+    game_sc = pyautogui.screenshot(region=(game_coords[0][0],game_coords[0][1], game_coords[1][0]-game_coords[0][0], game_coords[1][1]-game_coords[0][1]))
+    game_sc1 = cv.cvtColor(np.array(game_sc), cv.COLOR_RGB2BGR)
+    cv.imwrite("imagesOut/game_sc.png",game_sc1)
+
+    print(game_coords[1][0]-game_coords[0][0])
+
+    if game_coords[1][0]-game_coords[0][0] > 900:
+        grid = np.full((16,30), "0",  dtype=str)
+    elif game_coords[1][0]-game_coords[0][0] < 900:
+        grid = np.full((16,16), "0",  dtype=str)
+
+    print(game_coords[0][0])
+    print(game_coords[0][1])
+
+    numOCR(game_sc, grid);
+
+    rows = grid.shape[0]
+    cols = grid.shape[1]
+
+    for x in range(0, cols):
+        for y in range(0, rows):
+            #print(grid[x,y])
+            B1(x, y, grid) 
+    doCommands()
+
+mainLoop()
+
 
 
 
