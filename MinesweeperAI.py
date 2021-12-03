@@ -76,7 +76,7 @@ def numOCR(game_sc, grid):
 
     two_list = []
     twos = cv.imread("images/twos.png", 0)
-    resMatchMult(game_sc, twos, .93, "imagesOut/twosOut.png", two_list)
+    resMatchMult(game_sc, twos, .97, "imagesOut/twosOut.png", two_list)
 
     two_coords = []
     for two in two_list:
@@ -91,7 +91,7 @@ def numOCR(game_sc, grid):
 
     three_list = []
     threes = cv.imread("images/threes.png", 0)
-    resMatchMult(game_sc, threes, .93, "imagesOut/threesOut.png", three_list)
+    resMatchMult(game_sc, threes, .97, "imagesOut/threesOut.png", three_list)
 
     three_coords = []
     for three in three_list:
@@ -214,7 +214,7 @@ def doCommands():
     for command in click_list:
         print("click " + str(command))
         print("wanna click " + str([(command[0]*48)+10+game_coords[0][0], (command[1]*48)+137+game_coords[0][1]]))
-        print("wanna click " + str([((command[0]*48)+10+game_coords[0][0]+50)*0.5, ((command[1]*48)+137+game_coords[0][1]+50)*0.5]))
+        print("wanna click " + str([((command[0]*48)+10+game_coords[0][0]+24)*0.5, ((command[1]*48)+137+game_coords[0][1]+24)*0.5]))
         #mouse.move(((command[0]*48)+10+game_coords[0][0]+24)*0.5625, ((command[1]*48)+137+game_coords[0][1]+24)*0.5625, absolute=True, duration=0.1)
         #mouse.right_click()
         pyautogui.click(x=((command[0]*48)+10+game_coords[0][0]+50)*0.5, y=((command[1]*48)+137+game_coords[0][1]+50)*0.5)
@@ -248,18 +248,38 @@ def B2(x, y, grid):
                 click_list.append(surr[1])
 
 def one1(x, y, grid):
-    global flag_list
-    surrList = getSurr(x, y, grid)
-    count = 0
-    for surr in surrList:
-        if surr[0] == "x" or surr[0] == "f":
-            count += 1
-    if str(count) == grid[y, x]:
-        for surr in surrList:
+    if (grid[y, x] == "1"):
+        surrList = getSurr(x, y, grid)
+        count = 0
+        bomb50 = []
+        for surr in surrList: #first check surroundings for empty space
             if surr[0] == "x":
-                flag_list.append(surr[1])
+                count += 1
+                bomb50.append(surr[1])
+            elif surr[0] == "f":
+                return
+        if count == 2: #if there are 2 empty spaces, then continue
+            for surr in surrList: #check surroundings for 1s
+                if str(surr[0]) == "1": #if there is a 1, then continue
+                    count1 = 0 
+                    surrList1 = getSurr(surr[1][0], surr[1][1], grid) #get the surroundings of the 1
+                    for surr1 in surrList1: #for each of the surroundings of the 1
+                        if surr1[0] == "x" and surr1[1] in bomb50: #if that surrounfing is an empty space and is in the bomb50 list
+                            count1 += 1 #add to counter
+                    if count1 == 2:
+                        for surr1 in surrList1:
+                            if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                click_list.append(surr1[1])
+
+                    
 
 def mainLoop():
+
+    global flag_list
+    global click_list
+
+    flag_list = []
+    click_list = []
 
     game_sc = pyautogui.screenshot(region=(game_coords[0][0],game_coords[0][1], game_coords[1][0]-game_coords[0][0], game_coords[1][1]-game_coords[0][1]))
     game_sc1 = cv.cvtColor(np.array(game_sc), cv.COLOR_RGB2BGR)
@@ -277,16 +297,22 @@ def mainLoop():
 
     numOCR(game_sc, grid);
 
+    print(grid)
+
     rows = grid.shape[0]
     cols = grid.shape[1]
 
     for x in range(0, cols):
         for y in range(0, rows):
             #print(grid[x,y])
-            B1(x, y, grid) 
+            B1(x, y, grid)
+            B2(x, y, grid)
+            one1(x, y, grid)
     doCommands()
 
-mainLoop()
+for i in range(0, 5):
+    mainLoop()
+    time.sleep(.5)
 
 
 
