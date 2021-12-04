@@ -5,7 +5,7 @@ import time
 import math
 
 
-def resMatch(image, match, out):
+def resMatch(image, match, out): #takes and image and a template and returns the coordinates of the matched template in the image
     img = cv.cvtColor(np.array(image), cv.COLOR_RGB2GRAY)
     w, h = match.shape[::-1]
     method = eval("cv.TM_CCOEFF_NORMED")
@@ -19,7 +19,7 @@ def resMatch(image, match, out):
     cv.imwrite(out,img)
     return [top_left, bottom_right]
 
-def resMatchMult(image, match, thresh, out, list):
+def resMatchMult(image, match, thresh, out, list): #takes and image and a template and returns the coordinates of the matched template in the image multiple times
     img_full = cv.cvtColor(np.array(image), cv.COLOR_RGB2BGR)
     img_gray = cv.cvtColor(img_full, cv.COLOR_BGR2GRAY)
     w, h = match.shape[::-1]
@@ -31,13 +31,6 @@ def resMatchMult(image, match, thresh, out, list):
         cv.rectangle(img_full, pt, (pt[0] + w, pt[1] + h), (0,0,255), 2)
         list.append(pt)
     cv.imwrite(out,img_full)
-
-def removeDups(list):
-    newList = []
-    for item in list:
-        if item not in newList:
-            newList.append(item)
-    return newList
 
 print(pyautogui.size())
 
@@ -176,28 +169,108 @@ def numOCR(game_sc, grid):
         if grid[x[1]-1,x[0]-1] == 'x' or grid[x[1]-1,x[0]-1] == '0':
             grid[x[1]-1][x[0]-1] = "x"
 
+def removeDups(list):
+    newList = []
+    for item in list:
+        if item not in newList:
+            newList.append(item)
+    return newList
+
+
 flag_list = []
 click_list = []
 
 def getSurr(x, y, grid):
     surrList = []
-    if x-1 >= 0 and y-1 >= 0:
-        surrList.append([grid[y-1, x-1], [x-1, y-1], "top left"]) #top left
-    if y-1 >= 0:
-        surrList.append([grid[y-1, x], [x, y-1], "top"]) #top
-    if x+1 <= 15 and y-1 >= 0:
-        surrList.append([grid[y-1, x+1], [x+1, y-1], "top right"]) #top right
-    if x-1 >= 0:
-        surrList.append([grid[y, x-1], [x-1, y], "left"]) #left
-    if x+1 <= 15:
-        surrList.append([grid[y, x+1], [x+1, y], "right"]) #right
-    if x-1 >= 0 and y+1 <= 15:
-        surrList.append([grid[y+1, x-1], [x-1, y+1], "bottom left"]) #bottom left
-    if y+1 <= 15:
-        surrList.append([grid[y+1, x], [x, y+1], "bottom"]) #bottom
-    if x+1 <= 15 and y+1 <= 15:
-        surrList.append([grid[y+1, x+1], [x+1, y+1], "bottom right"]) #bottom right
-    return surrList
+    if grid.shape[1] >= 29:
+        if x-1 >= 0 and y-1 >= 0:
+            surrList.append([grid[y-1, x-1], [x-1, y-1], "top left"]) #top left
+        if y-1 >= 0:
+            surrList.append([grid[y-1, x], [x, y-1], "top"]) #top
+        if x+1 <= 29 and y-1 >= 0:
+            surrList.append([grid[y-1, x+1], [x+1, y-1], "top right"]) #top right
+        if x-1 >= 0:
+            surrList.append([grid[y, x-1], [x-1, y], "left"]) #left
+        if x+1 <= 29:
+            surrList.append([grid[y, x+1], [x+1, y], "right"]) #right
+        if x-1 >= 0 and y+1 <= 15:
+            surrList.append([grid[y+1, x-1], [x-1, y+1], "bottom left"]) #bottom left
+        if y+1 <= 15:
+            surrList.append([grid[y+1, x], [x, y+1], "bottom"]) #bottom
+        if x+1 <= 29 and y+1 <= 15:
+            surrList.append([grid[y+1, x+1], [x+1, y+1], "bottom right"]) #bottom right
+        return surrList
+    else:
+        if x-1 >= 0 and y-1 >= 0:
+            surrList.append([grid[y-1, x-1], [x-1, y-1], "top left"]) #top left
+        if y-1 >= 0:
+            surrList.append([grid[y-1, x], [x, y-1], "top"]) #top
+        if x+1 <= 15 and y-1 >= 0:
+            surrList.append([grid[y-1, x+1], [x+1, y-1], "top right"]) #top right
+        if x-1 >= 0:
+            surrList.append([grid[y, x-1], [x-1, y], "left"]) #left
+        if x+1 <= 15:
+            surrList.append([grid[y, x+1], [x+1, y], "right"]) #right
+        if x-1 >= 0 and y+1 <= 15:
+            surrList.append([grid[y+1, x-1], [x-1, y+1], "bottom left"]) #bottom left
+        if y+1 <= 15:
+            surrList.append([grid[y+1, x], [x, y+1], "bottom"]) #bottom
+        if x+1 <= 15 and y+1 <= 15:
+            surrList.append([grid[y+1, x+1], [x+1, y+1], "bottom right"]) #bottom right
+        return surrList
+
+def canReduceOne(x, y, grid, bombCount):
+    canReduce = False
+    if bombCount == 0 and grid[y][x] == "1":
+        canReduce = True
+    elif bombCount == 1 and grid[y, x] == "2":
+        canReduce = True
+    elif bombCount == 2 and grid[y, x] == "3":
+        canReduce = True
+    elif bombCount == 3 and grid[y, x] == "4":
+        canReduce = True
+    elif bombCount == 4 and grid[y, x] == "5":
+        canReduce = True
+    elif bombCount == 5 and grid[y, x] == "6":
+        canReduce = True
+    
+    return canReduce
+
+def canReduceTwo(x, y, grid, bombCount):
+    canReduce = False
+    if bombCount == 0 and grid[y, x] == "2":
+        canReduce = True
+    elif bombCount == 1 and grid[y, x] == "3":
+        canReduce = True
+    elif bombCount == 2 and grid[y, x] == "4":
+        canReduce = True
+    elif bombCount == 3 and grid[y, x] == "5":
+        canReduce = True
+    elif bombCount == 4 and grid[y, x] == "6":
+        canReduce = True
+    return canReduce
+
+def canReduceThree(x, y, grid, bombCount):
+    canReduce = False
+    if bombCount == 0 and grid[y, x] == "3":
+        canReduce = True
+    elif bombCount == 1 and grid[y, x] == "4":
+        canReduce = True
+    elif bombCount == 2 and grid[y, x] == "5":
+        canReduce = True
+    elif bombCount == 3 and grid[y, x] == "6":
+        canReduce = True
+    return canReduce
+
+def canReduceFour(x, y, grid, bombCount):
+    canReduce = False
+    if bombCount == 0 and grid[y, x] == "4":
+        canReduce = True
+    elif bombCount == 1 and grid[y, x] == "5":
+        canReduce = True
+    elif bombCount == 2 and grid[y, x] == "6":
+        canReduce = True
+    return canReduce
 
 def doCommands():
     global flag_list
@@ -274,16 +347,19 @@ def one1(x, y, grid):
 
 def one2(x, y, grid):
     global click_list
-    if (grid[y, x] == "1"):
-        surrList = getSurr(x, y, grid)
+    surrList = getSurr(x, y, grid)
+    bombCount = 0
+    for surr in surrList:
+        if surr[0] == "f":
+            bombCount += 1
+    canReduce = canReduceOne(x, y, grid, bombCount)
+    if canReduce:
         count = 0
         bomb50 = []
         for surr in surrList: #first check surroundings for empty space
             if surr[0] == "x":
                 count += 1
                 bomb50.append(surr[1])
-            elif surr[0] == "f":
-                return
         if count == 2: #if there are 2 empty spaces, then continue
             for surr in surrList: #check surroundings for 2s
                 if str(surr[0]) == "2": #if there is a 2, then continue
@@ -382,10 +458,71 @@ def one2(x, y, grid):
                                 for surr1 in surrList1:
                                     if str(surr1[0]) == "x" and surr1[1] not in bomb50:
                                         flag_list.append(surr1[1])
-                        
-                    
-                    
+        if count == 3:
+            for surr in surrList:
+                bombCount1 = 0
+                for surr1 in surrList:
+                    if surr1[0] == "f":
+                        bombCount1 += 1
+                canReduce2 = canReduceTwo(surr[1][0], surr[1][1], grid, bombCount1)
+                #canReduce3 = canReduceThree(surr[1][0], surr[1][1], grid, bombCount1)
+                #canReduce4 = canReduceFour(surr[1][0], surr[1][1], grid, bombCount1)
+                if canReduce2 == True:
+                    count1 = 0 
+                    bombCount1 = 0 
+                    surrList1 = getSurr(surr[1][0], surr[1][1], grid) #get the surroundings of the reducable 2
+                    for surr1 in surrList1: #for each of the surroundings of the reducable 2
+                        if surr1[0] == "x" and surr1[1] in bomb50: #if that surrounding is an empty space and is in the bomb50 list
+                            count1 += 1 #add to counter
+                    if count1 == 2:
+                        Xs = 0
+                        for surr1 in surrList1:
+                            if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                Xs += 1
+                        if Xs == 1:
+                            for surr1 in surrList1:
+                                if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                    flag_list.append(surr1[1])
+                                 
+def one1R(x, y, grid): 
+    global click_list
+    surrList = getSurr(x, y, grid)
+    bombCount = 0
+    for surr in surrList:
+        if str(surr[0]) == "f":
+            bombCount += 1
+    canReduce = canReduceOne(x, y, grid, bombCount)
 
+    if canReduce:
+        count = 0
+        bomb50 = []
+        for surr in surrList: #first check surroundings for empty space
+            if surr[0] == "x":
+                count += 1
+                bomb50.append(surr[1])
+        if count == 2: #if there are 2 empty spaces, then continue
+            for surr in surrList: #check surroundings for reducable to 1s
+                surrList1 = getSurr(surr[1][0], surr[1][1], grid)
+                bombCount1 = 0
+                for surr1 in surrList1:
+                    if str(surr1[0]) == "f":
+                        bombCount1 += 1
+                canReduce1 = canReduceOne(surr[1][0], surr[1][1], grid, bombCount1)
+
+                if canReduce1: #if there is a 1, then continue
+                    count1 = 0 
+                    surrList1 = getSurr(surr[1][0], surr[1][1], grid) #get the surroundings of the reducable 1
+                    for surr1 in surrList1: #for each of the surroundings of the reducable 1
+                        if surr1[0] == "x" and surr1[1] in bomb50: #if that surrounfing is an empty space and is in the bomb50 list
+                            count1 += 1 #add to counter
+                    if count1 == 2:
+                        for surr1 in surrList1:
+                            if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                click_list.append(surr1[1])
+        
+
+
+        
 def mainLoop():
 
     global flag_list
@@ -410,6 +547,7 @@ def mainLoop():
 
     numOCR(game_sc, grid);
 
+    np.set_printoptions(linewidth=240)
     print(grid)
 
     rows = grid.shape[0]
@@ -420,13 +558,14 @@ def mainLoop():
             #print(grid[x,y])
             B1(x, y, grid)
             B2(x, y, grid)
-            one1(x, y, grid)
+            #one1(x, y, grid)
             one2(x, y, grid)
+            one1R(x, y, grid)
     doCommands()
-
-for i in range(0, 15):
+    
+for i in range(0, 1):
     mainLoop()
-    time.sleep(.5)
+    time.sleep(.1)
 
 
 
