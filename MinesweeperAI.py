@@ -451,10 +451,61 @@ def one2(x, y, grid): #https://minesweeper.online/help/patterns#1-2
                                 for surr1 in surrList1:
                                     if str(surr1[0]) == "x" and surr1[1] not in bomb50:
                                         flag_list.append(surr1[1])
+                if str(surr[0]) == "5":
+                    count1 = 0 
+                    bombCount = 0
+                    surrList1 = getSurr(surr[1][0], surr[1][1], grid)
+                    for surr1 in surrList1: #for each of the surroundings of the 5
+                        if surr1[0] == "x" and surr1[1] in bomb50: #if that surrounfing is an empty space and is in the bomb50 list
+                            count1 += 1 #add to counter
+                        if surr1[0] == "f":
+                            bombCount += 1
+                    if count1 == 2:
+                        if bombCount == 4:
+                            for surr1 in surrList1:
+                                if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                    click_list.append(surr1[1])
+                        if bombCount == 3:
+                            Xs = 0
+                            for surr1 in surrList1:
+                                if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                    Xs += 1
+                            if Xs == 1:
+                                for surr1 in surrList1:
+                                    if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                        flag_list.append(surr1[1])
+                        if bombCount == 2:
+                            Xs = 0
+                            for surr1 in surrList1:
+                                if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                    Xs += 1
+                            if Xs == 2:
+                                for surr1 in surrList1:
+                                    if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                        flag_list.append(surr1[1])
+                        if bombCount == 1:
+                            Xs = 0
+                            for surr1 in surrList1:
+                                if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                    Xs += 1
+                            if Xs == 3:
+                                for surr1 in surrList1:
+                                    if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                        flag_list.append(surr1[1])
+                        if bombCount == 0:
+                            Xs = 0
+                            for surr1 in surrList1:
+                                if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                    Xs += 1
+                            if Xs == 4:
+                                for surr1 in surrList1:
+                                    if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                        flag_list.append(surr1[1])
         if count == 3:
             for surr in surrList:
                 bombCount1 = 0
-                for surr1 in surrList:
+                surrList1 = getSurr(surr[1][0], surr[1][1], grid)
+                for surr1 in surrList1:
                     if surr1[0] == "f":
                         bombCount1 += 1
                 canReduce2 = canReduceTwo(surr[1][0], surr[1][1], grid, bombCount1)
@@ -476,7 +527,7 @@ def one2(x, y, grid): #https://minesweeper.online/help/patterns#1-2
                             for surr1 in surrList1:
                                 if str(surr1[0]) == "x" and surr1[1] not in bomb50:
                                     flag_list.append(surr1[1])
-                                 
+
 def one1R(x, y, grid): #https://minesweeper.online/help/patterns#1-1r
     global click_list
     surrList = getSurr(x, y, grid)
@@ -523,15 +574,15 @@ def doCommands(): #Proccesses the commands in the click_list and flag_list and d
     for command in flag_list: #Flag Commands (what tiles need to be flagged)
         print("right click " + str(command)) #Grid coords
         print("wanna right click " + str([(command[0]*CELL_LENGTH)+X_GRID_OFFSET+game_coords[0][0], (command[1]*CELL_LENGTH)+Y_GRID_OFFSET+game_coords[0][1]])) #Multiply by Cell Length then add Grid Offset to return Pixel Coordinates
-        print("wanna right click " + str([((command[0]*CELL_LENGTH)+X_GRID_OFFSET+game_coords[0][0]+CELL_LENGTH+2)*SCALE_FACTOR, ((command[1]*CELL_LENGTH)+Y_GRID_OFFSET+game_coords[0][1]+CELL_LENGTH+2)*SCALE_FACTOR])) #Scaled coordinates
-        pyautogui.rightClick(x=((command[0]*CELL_LENGTH)+X_GRID_OFFSET+game_coords[0][0]+CELL_LENGTH+2)*SCALE_FACTOR, y=((command[1]*CELL_LENGTH)+Y_GRID_OFFSET+game_coords[0][1]+CELL_LENGTH+2)*SCALE_FACTOR) #Click the scaled Coordinates
+        print("wanna right click " + str([((command[0]*CELL_LENGTH)+X_GRID_OFFSET+game_coords[0][0]+CELL_LENGTH)*SCALE_FACTOR, ((command[1]*CELL_LENGTH)+Y_GRID_OFFSET+game_coords[0][1]+CELL_LENGTH)*SCALE_FACTOR])) #Scaled coordinates
+        pyautogui.rightClick(x=((command[0]*CELL_LENGTH)+X_GRID_OFFSET+game_coords[0][0]+CELL_LENGTH)*SCALE_FACTOR, y=((command[1]*CELL_LENGTH)+Y_GRID_OFFSET+game_coords[0][1]+CELL_LENGTH)*SCALE_FACTOR) #Click the scaled Coordinates
     global click_list #global variable click list which contains commands to click
     click_list = removeDups(click_list) #remove duplicates from the click list
     for command in click_list: #CLick Commands (what tiles need to be clicked)
         print("right click " + str(command)) #Grid coords
         print("wanna right click " + str([(command[0]*CELL_LENGTH)+X_GRID_OFFSET+game_coords[0][0], (command[1]*CELL_LENGTH)+Y_GRID_OFFSET+game_coords[0][1]])) #Multiply by Cell Length then add Grid Offset to return Pixel Coordinates
-        print("wanna right click " + str([((command[0]*CELL_LENGTH)+X_GRID_OFFSET+game_coords[0][0]+CELL_LENGTH+2)*SCALE_FACTOR, ((command[1]*CELL_LENGTH)+Y_GRID_OFFSET+game_coords[0][1]+CELL_LENGTH+2)*SCALE_FACTOR])) #Scaled coordinates
-        pyautogui.click(x=((command[0]*CELL_LENGTH)+X_GRID_OFFSET+game_coords[0][0]+CELL_LENGTH+2)*SCALE_FACTOR, y=((command[1]*CELL_LENGTH)+Y_GRID_OFFSET+game_coords[0][1]+CELL_LENGTH+2)*SCALE_FACTOR) #Click the scaled Coordinates
+        print("wanna right click " + str([((command[0]*CELL_LENGTH)+X_GRID_OFFSET+game_coords[0][0]+CELL_LENGTH)*SCALE_FACTOR, ((command[1]*CELL_LENGTH)+Y_GRID_OFFSET+game_coords[0][1]+CELL_LENGTH)*SCALE_FACTOR])) #Scaled coordinates
+        pyautogui.click(x=((command[0]*CELL_LENGTH)+X_GRID_OFFSET+game_coords[0][0]+CELL_LENGTH)*SCALE_FACTOR, y=((command[1]*CELL_LENGTH)+Y_GRID_OFFSET+game_coords[0][1]+CELL_LENGTH)*SCALE_FACTOR) #Click the scaled Coordinates
     if not flag_list and  not click_list:
         return False
     else:
@@ -584,7 +635,7 @@ def mainLoop(): #main loop of the program
     if finish == False: #if no commands are in the click_list and flag_list, exit the program
         sys.exit("No Other Commands/Finished")
     
-for i in range(0,3): 
+for i in range(0,25): 
     mainLoop()
     time.sleep(.1)
 
