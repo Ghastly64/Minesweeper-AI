@@ -191,7 +191,7 @@ def numOCR(game_sc, grid): #takes screenshot of playing area and returns a grid 
 
 flag_list = [] #List of flag moves needing to be done
 click_list = [] #List of click moves needing to be done
-
+bomb50 = []
 
 def getSurr(x, y, grid): #get surrounding cells
     surrList = []
@@ -234,7 +234,7 @@ def getSurr(x, y, grid): #get surrounding cells
 
 def canReduceOne(x, y, grid, bombCount): #Check if the cell can be reduced to one, for example a 2 with 1 bomb is the same as a 1
     canReduce = False
-    if bombCount == 0 and grid[y][x] == "1":
+    if bombCount == 0 and grid[y, x] == "1":
         canReduce = True
     elif bombCount == 1 and grid[y, x] == "2":
         canReduce = True
@@ -318,28 +318,30 @@ def one1(x, y, grid): #https://minesweeper.online/help/patterns#1-1
     if (grid[y, x] == "1"):
         surrList = getSurr(x, y, grid)
         count = 0
-        bomb50 = []
+        bomb50temp = []
         for surr in surrList: #first check surroundings for empty space
             if surr[0] == "x":
                 count += 1
-                bomb50.append(surr[1])
+                bomb50temp.append(surr[1])
             elif surr[0] == "f":
                 return
         if count == 2: #if there are 2 empty spaces, then continue
+            bomb50.append(bomb50temp)
             for surr in surrList: #check surroundings for 1s
                 if str(surr[0]) == "1": #if there is a 1, then continue
                     count1 = 0 
                     surrList1 = getSurr(surr[1][0], surr[1][1], grid) #get the surroundings of the 1
                     for surr1 in surrList1: #for each of the surroundings of the 1
-                        if surr1[0] == "x" and surr1[1] in bomb50: #if that surrounfing is an empty space and is in the bomb50 list
+                        if surr1[0] == "x" and surr1[1] in bomb50temp: #if that surrounfing is an empty space and is in the bomb50 list
                             count1 += 1 #add to counter
                     if count1 == 2:
                         for surr1 in surrList1:
-                            if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                            if str(surr1[0]) == "x" and surr1[1] not in bomb50temp:
                                 click_list.append(surr1[1])
 
 def one2(x, y, grid): #https://minesweeper.online/help/patterns#1-2
     global click_list
+    global bomb50
     surrList = getSurr(x, y, grid)
     bombCount = 0
     for surr in surrList:
@@ -348,108 +350,109 @@ def one2(x, y, grid): #https://minesweeper.online/help/patterns#1-2
     canReduce = canReduceOne(x, y, grid, bombCount)
     if canReduce:
         count = 0
-        bomb50 = []
+        bomb50temp = []
         for surr in surrList: #first check surroundings for empty space
             if surr[0] == "x":
                 count += 1
-                bomb50.append(surr[1])
+                bomb50temp.append(surr[1])
         if count == 2: #if there are 2 empty spaces, then continue
+            bomb50.append(bomb50temp)
             for surr in surrList: #check surroundings for 2s
                 if str(surr[0]) == "2": #if there is a 2, then continue
                     count1 = 0 
                     bombCount = 0 
                     surrList1 = getSurr(surr[1][0], surr[1][1], grid) #get the surroundings of the 2
                     for surr1 in surrList1: #for each of the surroundings of the 2
-                        if surr1[0] == "x" and surr1[1] in bomb50: #if that surrounfing is an empty space and is in the bomb50 list
+                        if surr1[0] == "x" and surr1[1] in bomb50temp: #if that surrounfing is an empty space and is in the bomb50 list
                             count1 += 1 #add to counter
                         if surr1[0] == "f":
                             bombCount += 1
                     if count1 == 2:
                         if bombCount == 1:
                             for surr1 in surrList1:
-                                if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                if str(surr1[0]) == "x" and surr1[1] not in bomb50temp:
                                     click_list.append(surr1[1])
                         if bombCount == 0:
                             Xs = 0
                             for surr1 in surrList1:
-                                if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                if str(surr1[0]) == "x" and surr1[1] not in bomb50temp:
                                     Xs += 1
                             if Xs == 1:
                                 for surr1 in surrList1:
-                                    if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                    if str(surr1[0]) == "x" and surr1[1] not in bomb50temp:
                                         flag_list.append(surr1[1])
                 if str(surr[0]) == "3":
                     count1 = 0 
                     bombCount = 0
                     surrList1 = getSurr(surr[1][0], surr[1][1], grid) #get the surroundings of the 3
                     for surr1 in surrList1: #for each of the surroundings of the 3
-                        if surr1[0] == "x" and surr1[1] in bomb50: #if that surrounfing is an empty space and is in the bomb50 list
+                        if surr1[0] == "x" and surr1[1] in bomb50temp: #if that surrounfing is an empty space and is in the bomb50 list
                             count1 += 1 #add to counter
                         if surr1[0] == "f":
                             bombCount += 1
                     if count1 == 2:
                         if bombCount == 2:
                             for surr1 in surrList1:
-                                if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                if str(surr1[0]) == "x" and surr1[1] not in bomb50temp:
                                     click_list.append(surr1[1])
                         if bombCount == 1:
                             Xs = 0
                             for surr1 in surrList1:
-                                if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                if str(surr1[0]) == "x" and surr1[1] not in bomb50temp:
                                     Xs += 1
                             if Xs == 1:
                                 for surr1 in surrList1:
-                                    if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                    if str(surr1[0]) == "x" and surr1[1] not in bomb50temp:
                                         flag_list.append(surr1[1])
                         if bombCount == 0:
                             Xs = 0
                             for surr1 in surrList1:
-                                if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                if str(surr1[0]) == "x" and surr1[1] not in bomb50temp:
                                     Xs += 1
                             if Xs == 2:
                                 for surr1 in surrList1:
-                                    if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                    if str(surr1[0]) == "x" and surr1[1] not in bomb50temp:
                                         flag_list.append(surr1[1])
                 if str(surr[0]) == "4":
                     count1 = 0 
                     bombCount = 0
                     surrList1 = getSurr(surr[1][0], surr[1][1], grid)
                     for surr1 in surrList1: #for each of the surroundings of the 4
-                        if surr1[0] == "x" and surr1[1] in bomb50: #if that surrounfing is an empty space and is in the bomb50 list
+                        if surr1[0] == "x" and surr1[1] in bomb50temp: #if that surrounfing is an empty space and is in the bomb50 list
                             count1 += 1 #add to counter
                         if surr1[0] == "f":
                             bombCount += 1
                     if count1 == 2:
                         if bombCount == 3:
                             for surr1 in surrList1:
-                                if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                if str(surr1[0]) == "x" and surr1[1] not in bomb50temp:
                                     click_list.append(surr1[1])
                         if bombCount == 2:
                             Xs = 0
                             for surr1 in surrList1:
-                                if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                if str(surr1[0]) == "x" and surr1[1] not in bomb50temp:
                                     Xs += 1
                             if Xs == 1:
                                 for surr1 in surrList1:
-                                    if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                    if str(surr1[0]) == "x" and surr1[1] not in bomb50temp:
                                         flag_list.append(surr1[1])
                         if bombCount == 1:
                             Xs = 0
                             for surr1 in surrList1:
-                                if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                if str(surr1[0]) == "x" and surr1[1] not in bomb50temp:
                                     Xs += 1
                             if Xs == 2:
                                 for surr1 in surrList1:
-                                    if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                    if str(surr1[0]) == "x" and surr1[1] not in bomb50temp:
                                         flag_list.append(surr1[1])
                         if bombCount == 0:
                             Xs = 0
                             for surr1 in surrList1:
-                                if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                if str(surr1[0]) == "x" and surr1[1] not in bomb50temp:
                                     Xs += 1
                             if Xs == 3:
                                 for surr1 in surrList1:
-                                    if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                    if str(surr1[0]) == "x" and surr1[1] not in bomb50temp:
                                         flag_list.append(surr1[1])
                 if str(surr[0]) == "5":
                     count1 = 0 
@@ -463,43 +466,43 @@ def one2(x, y, grid): #https://minesweeper.online/help/patterns#1-2
                     if count1 == 2:
                         if bombCount == 4:
                             for surr1 in surrList1:
-                                if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                if str(surr1[0]) == "x" and surr1[1] not in bomb50temp:
                                     click_list.append(surr1[1])
                         if bombCount == 3:
                             Xs = 0
                             for surr1 in surrList1:
-                                if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                if str(surr1[0]) == "x" and surr1[1] not in bomb50temp:
                                     Xs += 1
                             if Xs == 1:
                                 for surr1 in surrList1:
-                                    if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                    if str(surr1[0]) == "x" and surr1[1] not in bomb50temp:
                                         flag_list.append(surr1[1])
                         if bombCount == 2:
                             Xs = 0
                             for surr1 in surrList1:
-                                if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                if str(surr1[0]) == "x" and surr1[1] not in bomb50temp:
                                     Xs += 1
                             if Xs == 2:
                                 for surr1 in surrList1:
-                                    if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                    if str(surr1[0]) == "x" and surr1[1] not in bomb50temp:
                                         flag_list.append(surr1[1])
                         if bombCount == 1:
                             Xs = 0
                             for surr1 in surrList1:
-                                if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                if str(surr1[0]) == "x" and surr1[1] not in bomb50temp:
                                     Xs += 1
                             if Xs == 3:
                                 for surr1 in surrList1:
-                                    if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                    if str(surr1[0]) == "x" and surr1[1] not in bomb50temp:
                                         flag_list.append(surr1[1])
                         if bombCount == 0:
                             Xs = 0
                             for surr1 in surrList1:
-                                if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                if str(surr1[0]) == "x" and surr1[1] not in bomb50temp:
                                     Xs += 1
                             if Xs == 4:
                                 for surr1 in surrList1:
-                                    if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                    if str(surr1[0]) == "x" and surr1[1] not in bomb50temp:
                                         flag_list.append(surr1[1])
         if count == 3:
             for surr in surrList:
@@ -516,21 +519,22 @@ def one2(x, y, grid): #https://minesweeper.online/help/patterns#1-2
                     bombCount1 = 0 
                     surrList1 = getSurr(surr[1][0], surr[1][1], grid) #get the surroundings of the reducable 2
                     for surr1 in surrList1: #for each of the surroundings of the reducable 2
-                        if surr1[0] == "x" and surr1[1] in bomb50: #if that surrounding is an empty space and is in the bomb50 list
+                        if surr1[0] == "x" and surr1[1] in bomb50temp: #if that surrounding is an empty space and is in the bomb50 list
                             count1 += 1 #add to counter
                     if count1 == 2:
                         Xs = 0
                         for surr1 in surrList1:
-                            if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                            if str(surr1[0]) == "x" and surr1[1] not in bomb50temp:
                                 Xs += 1
                         if Xs == 1:
                             for surr1 in surrList1:
-                                if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                                if str(surr1[0]) == "x" and surr1[1] not in bomb50temp:
                                     flag_list.append(surr1[1])
 
 def one1R(x, y, grid): #https://minesweeper.online/help/patterns#1-1r
     global click_list
     surrList = getSurr(x, y, grid)
+    global bomb50
     bombCount = 0
     for surr in surrList:
         if str(surr[0]) == "f":
@@ -539,12 +543,13 @@ def one1R(x, y, grid): #https://minesweeper.online/help/patterns#1-1r
 
     if canReduce:
         count = 0
-        bomb50 = []
+        bomb50temp = []
         for surr in surrList: #first check surroundings for empty space
             if surr[0] == "x":
                 count += 1
-                bomb50.append(surr[1])
+                bomb50temp.append(surr[1])
         if count == 2: #if there are 2 empty spaces, then continue
+            bomb50.append(bomb50temp)
             for surr in surrList: #check surroundings for reducable to 1s
                 surrList1 = getSurr(surr[1][0], surr[1][1], grid)
                 bombCount1 = 0
@@ -557,12 +562,75 @@ def one1R(x, y, grid): #https://minesweeper.online/help/patterns#1-1r
                     count1 = 0 
                     surrList1 = getSurr(surr[1][0], surr[1][1], grid) #get the surroundings of the reducable 1
                     for surr1 in surrList1: #for each of the surroundings of the reducable 1
-                        if surr1[0] == "x" and surr1[1] in bomb50: #if that surrounfing is an empty space and is in the bomb50 list
+                        if surr1[0] == "x" and surr1[1] in bomb50temp: #if that surrounfing is an empty space and is in the bomb50 list
                             count1 += 1 #add to counter
                     if count1 == 2:
                         for surr1 in surrList1:
-                            if str(surr1[0]) == "x" and surr1[1] not in bomb50:
+                            if str(surr1[0]) == "x" and surr1[1] not in bomb50temp:
                                 click_list.append(surr1[1])
+
+def one2NonAdj(grid):
+    global bomb50
+    bomb50 = removeDups(bomb50) # [[[x,y],[x,y]], [[x,y),(x,y]]]
+    for bomb in bomb50:
+        if grid[bomb[0][1],bomb[0][0]] == "f" or grid[bomb[1][1],bomb[1][0]] == "f":
+            bomb50.remove(bomb)  
+    for bomb in bomb50: # [[x,y],[x,y]]
+        surrList = getSurr(bomb[0][0], bomb[0][1], grid)
+        for surr in surrList:
+            surrList1 = getSurr(surr[1][0], surr[1][1], grid)
+            count1 = 0
+            for surr1 in surrList1:
+                if str(surr1[0]) == "x" and surr1[1] in bomb:
+                    count1 += 1
+            if count1 == 2:
+                bombCount = 0
+                for surr1 in surrList1:
+                    if str(surr1[0]) == "f":
+                        bombCount += 1
+                canReduce = canReduceOne(surr[1][0], surr[1][1], grid, bombCount)
+                canReduce2 = canReduceTwo(surr[1][0], surr[1][1], grid, bombCount)
+                canReduce3 = canReduceThree(surr[1][0], surr[1][1], grid, bombCount)
+                canReduce4 = canReduceFour(surr[1][0], surr[1][1], grid, bombCount)
+                if canReduce:
+                    surrList1 = getSurr(surr[1][0], surr[1][1], grid)
+                    for surr1 in surrList1:
+                        if str(surr1[0]) == "x" and surr1[1] not in bomb:
+                            click_list.append(surr1[1])
+                if canReduce2:
+                    surrList1 = getSurr(surr[1][0], surr[1][1], grid)
+                    emptyCount = 0
+                    for surr1 in surrList1:
+                        if str(surr1[0]) == "x" and surr1[1] not in bomb:
+                            emptyCount += 1
+                    if emptyCount == 1:
+                        for surr1 in surrList1:
+                            if str(surr1[0]) == "x" and surr1[1] not in bomb:
+                                flag_list.append(surr1[1])
+                if canReduce3:
+                    surrList1 = getSurr(surr[1][0], surr1[1][1], grid)
+                    emptyCount = 0
+                    for surr1 in surrList1:
+                        if str(surr1[0]) == "x" and surr1[1] not in bomb:
+                            emptyCount += 1
+                    if emptyCount == 2:
+                        for surr1 in surrList1:
+                            if str(surr1[0]) == "x" and surr1[1] not in bomb:
+                                flag_list.append(surr1[1])
+                if canReduce4:
+                    surrList1 = getSurr(surr[1][0], surr1[1][1], grid)
+                    emptyCount = 0
+                    for surr1 in surrList1:
+                        if str(surr1[0]) == "x" and surr1[1] not in bomb:
+                            emptyCount += 1
+                    if emptyCount == 3:
+                        for surr1 in surrList1:
+                            if str(surr1[0]) == "x" and surr1[1] not in bomb:
+                                flag_list.append(surr1[1])
+
+                    
+
+                
 
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -579,7 +647,7 @@ def doCommands(): #Proccesses the commands in the click_list and flag_list and d
     global click_list #global variable click list which contains commands to click
     click_list = removeDups(click_list) #remove duplicates from the click list
     for command in click_list: #CLick Commands (what tiles need to be clicked)
-        print("right click " + str(command)) #Grid coords
+        print("click " + str(command)) #Grid coords
         print("wanna right click " + str([(command[0]*CELL_LENGTH)+X_GRID_OFFSET+game_coords[0][0], (command[1]*CELL_LENGTH)+Y_GRID_OFFSET+game_coords[0][1]])) #Multiply by Cell Length then add Grid Offset to return Pixel Coordinates
         print("wanna right click " + str([((command[0]*CELL_LENGTH)+X_GRID_OFFSET+game_coords[0][0]+CELL_LENGTH)*SCALE_FACTOR, ((command[1]*CELL_LENGTH)+Y_GRID_OFFSET+game_coords[0][1]+CELL_LENGTH)*SCALE_FACTOR])) #Scaled coordinates
         pyautogui.click(x=((command[0]*CELL_LENGTH)+X_GRID_OFFSET+game_coords[0][0]+CELL_LENGTH)*SCALE_FACTOR, y=((command[1]*CELL_LENGTH)+Y_GRID_OFFSET+game_coords[0][1]+CELL_LENGTH)*SCALE_FACTOR) #Click the scaled Coordinates
@@ -601,9 +669,11 @@ def mainLoop(): #main loop of the program
 
     global flag_list #global variable flag list which contains commands to flag
     global click_list #global variable click list which contains commands to click
+    global bomb50
 
     flag_list = [] #set flag list to empty
     click_list = [] #set click list to empty
+    bomb50 = []
 
     game_sc = pyautogui.screenshot(region=(game_coords[0][0],game_coords[0][1], game_coords[1][0]-game_coords[0][0], game_coords[1][1]-game_coords[0][1])) #take screenshot of playing area
     game_sc1 = cv.cvtColor(np.array(game_sc), cv.COLOR_RGB2BGR) #convert the screenshot to BGR for OpenCV to work with
@@ -631,14 +701,18 @@ def mainLoop(): #main loop of the program
             #one1(x, y, grid)
             one1R(x, y, grid)
             one2(x, y, grid)
-            one1R(x, y, grid)
     finish = doCommands() #run the commands in the click_list and flag_list
-    if finish == False: #if no commands are in the click_list and flag_list, exit the program
+    finish1 = True
+    if finish == False: #if there are no commands to run
+        print("Attempting Last Resort") 
+        one2NonAdj(grid) #run the one2NonAdj function
+        finish1 = doCommands()
+    if finish1 == False: #if no commands are in the click_list and flag_list, exit the program
         sys.exit("No Other Commands/Finished")
     
-for i in range(0,25): 
+while True: #main loop of the program
     mainLoop()
-    time.sleep(.1)
+    time.sleep(.05)
 
 
 
