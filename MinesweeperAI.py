@@ -458,7 +458,7 @@ def one2(x, y, grid):
                                 for surr1 in surrList1:
                                     if str(surr1[0]) == "x" and surr1[1] not in bomb50:
                                         flag_list.append(surr1[1])
-        if count == 3:
+        """ if count == 3:
             for surr in surrList:
                 bombCount1 = 0
                 for surr1 in surrList:
@@ -482,7 +482,7 @@ def one2(x, y, grid):
                         if Xs == 1:
                             for surr1 in surrList1:
                                 if str(surr1[0]) == "x" and surr1[1] not in bomb50:
-                                    flag_list.append(surr1[1])
+                                    flag_list.append(surr1[1]) """
                                  
 def one1R(x, y, grid): 
     global click_list
@@ -519,7 +519,8 @@ def one1R(x, y, grid):
                         for surr1 in surrList1:
                             if str(surr1[0]) == "x" and surr1[1] not in bomb50:
                                 click_list.append(surr1[1])
-        
+
+
 
 
         
@@ -559,11 +560,12 @@ def mainLoop():
             B1(x, y, grid)
             B2(x, y, grid)
             #one1(x, y, grid)
-            one2(x, y, grid)
             one1R(x, y, grid)
+            one2(x, y, grid)
+            
     doCommands()
     
-for i in range(0, 1):
+for i in range(0, 10):
     mainLoop()
     time.sleep(.1)
 
