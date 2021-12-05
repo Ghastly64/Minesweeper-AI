@@ -569,7 +569,7 @@ def one1R(x, y, grid): #https://minesweeper.online/help/patterns#1-1r
                             if str(surr1[0]) == "x" and surr1[1] not in bomb50temp:
                                 click_list.append(surr1[1])
 
-def one2NonAdj(grid):
+def one2NonAdj(grid): #performs the same as one2 but does not rely on first finding a 1 then looking for adjacents
     global bomb50
     bomb50 = removeDups(bomb50) # [[[x,y],[x,y]], [[x,y),(x,y]]]
     for bomb in bomb50:
@@ -703,11 +703,11 @@ def mainLoop(): #main loop of the program
             one2(x, y, grid)
     finish = doCommands() #run the commands in the click_list and flag_list
     finish1 = True
-    if finish == False: #if there are no commands to run
+    if finish == False: #if there are no commands to run, run one2NonAdj
         print("Attempting Last Resort") 
-        one2NonAdj(grid) #run the one2NonAdj function
+        one2NonAdj(grid) #run the one2NonAdj function, rare pattern so only called when nothing else works
         finish1 = doCommands()
-    if finish1 == False: #if no commands are in the click_list and flag_list, exit the program
+    if finish1 == False: #if no commands are in the click_list and flag_list still, exit the program
         sys.exit("No Other Commands/Finished")
     
 while True: #main loop of the program
