@@ -742,7 +742,7 @@ def mainLoop(): #main loop of the program
 
 while True: #main loop of the program
     mainLoop()
-    time.sleep(.05)
+    #time.sleep(.05)
 
 
 
