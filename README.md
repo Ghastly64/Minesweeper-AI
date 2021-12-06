@@ -12,7 +12,7 @@ There are 4 Constants that must be changed for this program to work which are ex
 1. Download Images folder and Script
 2. Change constants in script
 3. Launch a 16x16 or 30x16 game in Minesweeper Online
-4. Make the first click (green cross on No Guessing)
+4. Make the first click if using Standard Mode, on No Guessing you don't have to do anything
 5. Run the bot
 
 [![Minesweeper video](https://img.youtube.com/vi/i2AWh1MgE5U/0.jpg)](https://www.youtube.com/watch?v=i2AWh1MgE5U)
