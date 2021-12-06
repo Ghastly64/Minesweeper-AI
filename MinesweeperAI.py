@@ -63,12 +63,12 @@ game_coords = [top_l[0], bot_r[1]] #using top left corner and bottom right corne
 
 
 
-def greenXfunc(game_sc):
+def greenXfunc(game_sc): #check if there is a greenX and click it if it exists
     greenX_list = []
     greenMatch = cv.imread("images/greenX.png", 0) #load the template for the green cross
     resMatchMult(game_sc, greenMatch, 0.93, "imagesOut/greenX.png", greenX_list)
 
-    greenX_coords = [] #define an empty list that will contain the grid coordinates of the 1s (grid coords start at 0)
+    greenX_coords = [] #define an empty list that will contain the grid coordinates of the green X
 
     for green in greenX_list: #for screen coordinates of each 1 convert to grid coords
         x = math.floor((green[0] - X_GRID_OFFSET) / CELL_LENGTH) #minus the x offset then divide by 48 to get grid coords, round up to nearest whole number
@@ -706,7 +706,7 @@ def mainLoop(): #main loop of the program
     elif game_coords[1][0]-game_coords[0][0] < CELL_LENGTH * 18: #if the playeing area is less than 18 cells wide
         grid = np.full((16,16), "0",  dtype=str) #make the grid 16x16
 
-    if greenX:
+    if greenX: #greenX for first move on No Guessing
         greenXfunc(game_sc)
         doCommands()
         greenX = False
