@@ -62,6 +62,24 @@ bot_r = resMatch(image, scMatch2, "imagesOut/res2.png") #find the bototm right c
 game_coords = [top_l[0], bot_r[1]] #using top left corner and bottom right corner of playing area calculate coordinates for playing area
 
 
+
+def greenXfunc(game_sc):
+    greenX_list = []
+    greenMatch = cv.imread("images/greenX.png", 0) #load the template for the green cross
+    resMatchMult(game_sc, greenMatch, 0.93, "imagesOut/greenX.png", greenX_list)
+
+    greenX_coords = [] #define an empty list that will contain the grid coordinates of the 1s (grid coords start at 0)
+
+    for green in greenX_list: #for screen coordinates of each 1 convert to grid coords
+        x = math.floor((green[0] - X_GRID_OFFSET) / CELL_LENGTH) #minus the x offset then divide by 48 to get grid coords, round up to nearest whole number
+        y = math.floor((green[1] - Y_GRID_OFFSET) / CELL_LENGTH) #minus the y offset then divide by 48 to get grid coords, round up to nearest whole number
+        greenX_coords.append([x, y]) #append the grid coords to the grid cord list
+
+    if greenX_list:
+        print("Green X Found")
+        print([greenX_coords[0][0], greenX_coords[0][1]])
+        click_list.append([greenX_coords[0][0], greenX_coords[0][1]])
+
 def numOCR(game_sc, grid): #takes screenshot of playing area and returns a grid of the numbers in the playing area
     one_list = [] #define an empty list that will contain the screen coordinates of the 1s
     ones = cv.imread("images/ones.png", 0) #load the template for the 1s
@@ -192,6 +210,7 @@ def numOCR(game_sc, grid): #takes screenshot of playing area and returns a grid 
 flag_list = [] #List of flag moves needing to be done
 click_list = [] #List of click moves needing to be done
 bomb50 = []
+greenX = True
 
 def getSurr(x, y, grid): #get surrounding cells
     surrList = []
@@ -628,8 +647,6 @@ def one2NonAdj(grid): #performs the same as one2 but does not rely on first find
                             if str(surr1[0]) == "x" and surr1[1] not in bomb:
                                 flag_list.append(surr1[1])
 
-                    
-
                 
 
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -670,6 +687,9 @@ def mainLoop(): #main loop of the program
     global flag_list #global variable flag list which contains commands to flag
     global click_list #global variable click list which contains commands to click
     global bomb50
+    global greenX
+
+    
 
     flag_list = [] #set flag list to empty
     click_list = [] #set click list to empty
@@ -685,6 +705,13 @@ def mainLoop(): #main loop of the program
         grid = np.full((16,30), "0",  dtype=str) #make the grid 16x30
     elif game_coords[1][0]-game_coords[0][0] < CELL_LENGTH * 18: #if the playeing area is less than 18 cells wide
         grid = np.full((16,16), "0",  dtype=str) #make the grid 16x16
+
+    if greenX:
+        greenXfunc(game_sc)
+        doCommands()
+        greenX = False
+        return
+        
 
     numOCR(game_sc, grid) #run the OCR function on game_sc
 
@@ -709,7 +736,10 @@ def mainLoop(): #main loop of the program
         finish1 = doCommands()
     if finish1 == False: #if no commands are in the click_list and flag_list still, exit the program
         sys.exit("No Other Commands/Finished")
-    
+
+
+
+
 while True: #main loop of the program
     mainLoop()
     time.sleep(.05)
